@@ -16,15 +16,17 @@ inert, inter, niter, retin, trine
 inset, neist, snite, stein, stine, tsine
 """
 
+import string
 DEBUG = False
 
+# NOTE: reference implementation implies case-sensitivity
 def get_anagrams(word_list):
     anagrams = {}
     for word in word_list:
+        word = word.strip()
         if len(word) >= 4:
             # convert to tuple so it's hashable
-            word = word.strip()
-            chars = tuple(sorted([char for char in word]))
+            chars = tuple(sorted([char for char in word if char in string.letters]))
             anagrams[chars] = anagrams.get(chars, [])
             anagrams[chars].append(word)
     return [anagram_list for (key_chars, anagram_list) in anagrams.items()
@@ -37,11 +39,14 @@ def main():
             print ', '.join(anagrams)
 
 def test_anagrams():
-    test_words = ['emit', 'item', 'mit', 'mite', 'mitre', 'time', 'tea', 'eat', 'ate', 'eta']
+    # make sure we only count letters
+    test_words = ['emit', 'item', 'mit', 'mite', 'mitre', 'time', 'tea',
+                  'eat', 'ate', 'eta', 'abc ', 'acb ', 'bca ', 'cab ', 'cba ']
     test_anagrams = get_anagrams(test_words)
     assert(len(test_anagrams) == 1)
     assert(len(test_anagrams[0]) >= len(test_anagrams[0][0]))
-    # assert(test_anagrams == [['emit', 'item', 'mite', 'time']])
+    assert(test_anagrams == [['emit', 'item', 'mite', 'time']])
+    print "tests passed"
 
 
 if __name__ == '__main__':
